@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <fstream>
 
 #include <type.h>
 #include <cst.h>
@@ -9,13 +10,56 @@
 using namespace std;
 
 //***********************************************************************************/
+//************************   Initialisation paramètres   ****************************/
+//***********************************************************************************/
+
+void initParams (CMyParam & param){
+
+    //touche du joueur
+    param.mapParamChar["toucheHaut"] = 'z';
+    param.mapParamChar["toucheGauche"] = 'q';
+    param.mapParamChar["toucheBas"] = 'x';
+    param.mapParamChar["toucheDroite"] = 'd';
+
+    //taille de la grille - on suppose que c'est un rectangle
+    param.mapParamUnsigned["nbColonnes"] = 7;
+    param.mapParamUnsigned["nbLignes"] = 7;
+    param.mapParamUnsigned["nbMax"] = 5;
+}
+
+void chargerParametre(CMyParam & params, const string & fichier){
+    ifstream ifs (fichier);
+    if (!ifs) return;
+    string cle;
+    while (ifs>>cle){
+        if(params.mapParamUnsigned.find(cle) != params.mapParamUnsigned.end()){
+            char deuxPts;
+            ifs >> deuxPts;
+            unsigned val;
+            ifs >> val;
+            params.mapParamUnsigned[cle]=val;
+        }
+        else if (params.mapParamChar.find(cle) != params.mapParamChar.end()){
+            char deuxPts;
+            ifs >> deuxPts;
+            char val;
+            ifs >> val;
+            params.mapParamChar[cle]=val;
+        }
+        else {
+            string tmp;
+            getline(ifs, tmp);
+        }
+    }
+}
+
+//***********************************************************************************/
 //******************   Initialisation et remplissage matrice   **********************/
 //***********************************************************************************/
 
+
 //initialisation de la grille de jeu
-void initMat (CMatrice & mat, const size_t & nbLignes = 10,
-             const size_t & nbColonnes = 10,
-             const unsigned & nbMax= KPlusGrandNombreDansLaMatrice){
+void initMat (CMatrice & mat, const size_t & nbLignes = 10, const size_t & nbColonnes = 10, const unsigned & nbMax= KPlusGrandNombreDansLaMatrice){
     mat.resize(nbLignes, vector<contenueDUneCase>(nbColonnes));
     for (size_t i = 0; i < nbLignes; ++i) {
         for (size_t j = 0; j < nbColonnes; ++j) {
@@ -24,6 +68,23 @@ void initMat (CMatrice & mat, const size_t & nbLignes = 10,
             mat[i][j] = nb;
         }
     }
+}
+
+
+void initMat(CMatrice & mat, const CMyParam & params){
+    auto it = params.mapParamUnsigned.find("nbLignes");
+    if (it == params.mapParamUnsigned.end())
+        exit(1);
+    size_t nbLignes = it->second;
+    it = params.mapParamUnsigned.find("nbColonnes");
+    if (it == params.mapParamUnsigned.end())
+        exit(2);
+    size_t nbColonnes = it->second;
+    it = params.mapParamUnsigned.find("nbMax");
+    if (it == params.mapParamUnsigned.end())
+        exit(3);
+    size_t nbMax = it->second;
+    initMat(mat, nbLignes, nbColonnes, nbMax);
 }
 
 void remplirMatrice(CMatrice & mat, const unsigned & nbMax= KPlusGrandNombreDansLaMatrice){
@@ -104,7 +165,7 @@ bool detectionExplositionUneBombeVerticale (CMatrice & mat){
     bool auMoinsUneExplosion (false);
     //size_t numCol;
     //on parcours la matrice case / case
-    for (size_t numCol (0); numCol < 10/*mat[numLigne].size()*/; ++numCol){
+    for (size_t numCol (0); numCol < /*10*/ mat[0].size(); ++numCol){
         for (size_t numLigne (0); numLigne < mat.size(); ++numLigne){
             // si on tombe sur la valeur KAIgnorer, on passe a la case suivante
             if (KAIgnorer == mat [numLigne][numCol]) continue;
@@ -265,13 +326,25 @@ int ppalExo04 (){
 }
 */
 
+int ppalExo06 (){
+    CMatrice mat;
+    CMyParam params;
+    initParams(params);
+    chargerParametre(params, "../number_crush/config.yaml");
+    //initMat(mat, 10, 10);
+    initMat(mat,params);
+    // affichage de la matrice sans les numéros de lignes / colonnes en haut / à gauche
+    afficheMatriceV2 (mat);
+    return 0;
+}
+
 //***********************************************************************************/
 //*************************************   Main   ************************************/
 //***********************************************************************************/
 
 int main() {
 
-    //ppalExo03();
+    ppalExo06();
     srand (time(NULL));
     // ---------Exercice 2 -----------------//
     //    clearScreen();
