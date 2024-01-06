@@ -70,7 +70,6 @@ void initMat (CMatrice & mat, const size_t & nbLignes = 10, const size_t & nbCol
     }
 }
 
-
 void initMat(CMatrice & mat, const CMyParam & params){
     auto it = params.mapParamUnsigned.find("nbLignes");
     if (it == params.mapParamUnsigned.end())
@@ -202,14 +201,14 @@ bool detectionExplositionUneBombeVerticale (CMatrice & mat, int & score, int & n
 //***********************************************************************************/
 
 void faitUnMouvement (CMatrice & mat) {
-    cout << "Entre les coordonnees du numero a deplacer" << endl;
+    cout << "Entrez les coordonnees du numero a deplacer" << endl;
     cout << "Numero de ligne : ";
     unsigned numLigne;
     cin >> numLigne;
     cout << "Numero de colonne : ";
     unsigned numCol;
     cin >> numCol;
-    cout << "Choisir A, Z, E, Q, D, X, C ou V pour se deplacer : ";
+    cout << "Choisir z, q, d ou x pour se deplacer : ";
     char deplacement;
     cin >> deplacement;
     switch (tolower(deplacement)) {
@@ -242,7 +241,7 @@ void faitUnMouvement (CMatrice & mat) {
         swap(mat[numLigne][numCol],mat[numLigne+1][numCol]);
         break;
     default:
-        cout<<"Tu choisis A, Z, E, Q, D, X, C ou V"<<endl;
+        cout<<"Choisir z, q, d ou x"<<endl;
         break;
     }
 }
@@ -335,107 +334,8 @@ void afficheMenu(){
 }
 
 //***********************************************************************************/
-//************************************   Tests   ************************************/
+//*************************************   Jeu   *************************************/
 //***********************************************************************************/
-
-/*
-int ppalExo01 (){
-    CMatrice mat = {};
-    initMat(mat);
-    // affichage de la matrice sans les numéros de lignes / colonnes en haut / à gauche
-    afficheMatriceV2 (mat);
-    //detectionExplositionUneBombeHorizontale (mat);
-    return 0;
-}
-
-int ppalExo02 (){
-    CMatrice mat;
-    initMat(mat);
-    // affichage de la matrice sans les numéros de lignes / colonnes en haut / à gauche
-    afficheMatriceV2 (mat);
-    while (detectionExplositionUneBombeHorizontale(mat)){
-        detectionExplositionUneBombeHorizontale(mat);
-    }
-    afficheMatriceV2 (mat);
-    return 0;
-}
-int ppalExo02bis (){
-    CMatrice mat;
-    initMat(mat);
-    // affichage de la matrice sans les numéros de lignes / colonnes en haut / à gauche
-    afficheMatriceV2 (mat);
-    while (detectionExplositionUneBombeVerticale(mat)){
-        detectionExplositionUneBombeVerticale(mat);
-    }
-    afficheMatriceV2 (mat);
-    return 0;
-}
-
-int ppalExo03 (){
-    CMatrice mat;
-    initMat(mat);
-    // affichage de la matrice sans les numéros de lignes / colonnes en haut / à gauche
-    afficheMatriceV1 (mat);
-    while (detectionExplositionUneBombeHorizontale (mat) && detectionExplositionUneBombeVerticale(mat)) {
-        detectionExplositionUneBombeHorizontale(mat);
-        detectionExplositionUneBombeVerticale(mat);
-    }
-    detectionExplositionUneBombeVerticale(mat);
-    afficheMatriceV2 (mat);
-    while (true) {
-        cout << "Fait un mouvement ";
-        cout << "numero de ligne : ";
-        size_t numLigne;
-        cin >> numLigne;
-        cout << "numero de colonne : ";
-        size_t numCol;
-        cin >> numCol;
-        cout << "Sens du deplacement : (A|Z|E|Q|D|W|X|C) : " << endl;
-        char deplacement;
-        cin >> deplacement;
-        //faitUnMouvement (mat, deplacement, numLigne, numCol);
-        afficheMatriceV2 (mat);
-    }
-    return 0;
-}
-
-int ppalExo04 (){
-    CMatrice mat;
-    initMat(mat);
-    // affichage de la matrice sans les numéros de lignes / colonnes en haut / à gauche
-    detectionExplositionUneBombeHorizontale (mat);
-    afficheMatriceV2 (mat);
-    //condition de victoire a trouver
-    while (true) {
-        cout << "Fait un mouvement ";
-        cout << "numero de ligne : ";
-        size_t numLigne;
-        cout << numLigne;
-        cout << "numero de colonne : ";
-        size_t numCol;
-        cout << numCol;
-        cout << "Sens du deplacement : (A|Z|E|Q|D|W|X|C) : " << endl;
-        char deplacement;
-        cin >> deplacement;
-        faitUnMouvement (mat, deplacement, numLigne, numCol);
-        detectionExplositionUneBombeHorizontale (mat);
-        afficheMatriceV2 (mat);
-    }
-    return 0;
-}
-
-int ppalExo06 (){
-    CMatrice mat;
-    CMyParam params;
-    initParams(params);
-    chargerParametre(params, "../number_crush/config.yaml");
-    //initMat(mat, 10, 10);
-    initMat(mat,params);
-    // affichage de la matrice sans les numéros de lignes / colonnes en haut / à gauche
-    afficheMatriceV2 (mat);
-    return 0;
-}
-*/
 
 int ppal (){
     CMatrice mat;
@@ -469,6 +369,4 @@ int ppal (){
 
 int main() {
     afficheMenu();
-    //ppalExo06();
-    //srand (time(NULL));
 }
