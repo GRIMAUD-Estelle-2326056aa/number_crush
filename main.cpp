@@ -18,7 +18,7 @@ void initParams (CMyParam & param){
     //touche du joueur
     param.mapParamChar["toucheHaut"] = 'z';
     param.mapParamChar["toucheGauche"] = 'q';
-    param.mapParamChar["toucheBas"] = 'x';
+    param.mapParamChar["toucheBas"] = 's';
     param.mapParamChar["toucheDroite"] = 'd';
 
     //taille de la grille - on suppose que c'est un rectangle
@@ -114,7 +114,7 @@ void explositionUneBombeHorizontale (CMatrice & mat, const size_t & numLigne, co
     }
 }
 
-bool detectionExplositionUneBombeHorizontale (CMatrice & mat, int & score, int & nbCoups){
+bool detectionExplositionUneBombeHorizontale (CMatrice & mat, int & score, int & nbCoups, int & niveau){
     bool auMoinsUneExplosion (false);
     //on parcourt la matrice case / case
     for (size_t numLigne (0); numLigne < mat.size(); ++numLigne){
@@ -126,6 +126,14 @@ bool detectionExplositionUneBombeHorizontale (CMatrice & mat, int & score, int &
             while (numCol + combienALaSuite < mat[numLigne].size() &&
                    mat[numLigne][numCol] == mat[numLigne][numCol + combienALaSuite])
                 ++combienALaSuite;
+            // cas initialisation de matrice niveau 2
+            if (nbCoups == 0 && niveau == 2){
+                if (combienALaSuite >=2){
+                    auMoinsUneExplosion = true;
+                    explositionUneBombeHorizontale(mat, numLigne, numCol, combienALaSuite);
+                    remplirMatrice(mat);
+                }
+            }
             //si on a au moins 3 chiffres identiques a la suite
             if (combienALaSuite >= 3){
                 auMoinsUneExplosion = true;
@@ -163,7 +171,7 @@ void explositionUneBombeVerticale (CMatrice & mat, const size_t & numLigne,
     }
 }
 
-bool detectionExplositionUneBombeVerticale (CMatrice & mat, int & score, int & nbCoups){
+bool detectionExplositionUneBombeVerticale (CMatrice & mat, int & score, int & nbCoups, int & niveau){
     bool auMoinsUneExplosion (false);
     // on parcourt la matrice case / case
     for (size_t numCol (0); numCol < /*10*/ mat[0].size(); ++numCol){
@@ -175,21 +183,29 @@ bool detectionExplositionUneBombeVerticale (CMatrice & mat, int & score, int & n
             while (numLigne + combienALaSuite < mat.size() &&
                    mat[numLigne][numCol] == mat[numLigne + combienALaSuite][numCol])
                             ++combienALaSuite;
-            //si on a aun moins 3 chiffres identiques a la suite
+            // cas initialisation de matrice niveau 2
+            if (nbCoups == 0 && niveau == 2){
+                if (combienALaSuite >=2){
+                    auMoinsUneExplosion = true;
+                    explositionUneBombeVerticale(mat, numLigne, numCol, combienALaSuite);
+                    remplirMatrice(mat);
+                }
+            }
+            //on a aun moins 3 chiffres identiques a la suite
             if (combienALaSuite >= 3){
-                            auMoinsUneExplosion = true;
-                            //cout << "on a une suite en position numLigne = " << numLigne
-                            //     << "; colonne = " << numCol
-                            //     << "; sur  " << combienALaSuite << " cases" << endl;
-                            //cout << string (20, '-') << endl << "matrice avant suppresion" << endl;
-                            //afficheMatriceV2(mat);
-                            explositionUneBombeVerticale(mat, numLigne, numCol, combienALaSuite);
-                            remplirMatrice(mat);
-                            if (nbCoups>0){
-                                score += 1;
-                            }
-                            //cout << string (20, '-') << endl << "matrice après suppresion" << endl;
-                            //afficheMatriceV2(mat);
+                auMoinsUneExplosion = true;
+                //cout << "on a une suite en position numLigne = " << numLigne
+                //     << "; colonne = " << numCol
+                //     << "; sur  " << combienALaSuite << " cases" << endl;
+                //cout << string (20, '-') << endl << "matrice avant suppresion" << endl;
+                //afficheMatriceV2(mat);
+                explositionUneBombeVerticale(mat, numLigne, numCol, combienALaSuite);
+                remplirMatrice(mat);
+                if (nbCoups>0){
+                    score += 1;
+                }
+                //cout << string (20, '-') << endl << "matrice après suppresion" << endl;
+                //afficheMatriceV2(mat);
             }
         }
     }
@@ -208,7 +224,7 @@ void faitUnMouvement (CMatrice & mat) {
     cout << "Numero de colonne : ";
     unsigned numCol;
     cin >> numCol;
-    cout << "Choisir z, q, d ou x pour se deplacer : ";
+    cout << "Choisir z, q, d ou s pour se deplacer : ";
     char deplacement;
     cin >> deplacement;
     switch (tolower(deplacement)) {
@@ -233,7 +249,7 @@ void faitUnMouvement (CMatrice & mat) {
         };
         swap(mat[numLigne][numCol],mat[numLigne][numCol+1]);
         break;
-    case 'x':
+    case 's':
         if (numLigne==mat.size()-1){
             cout << "erreur" << endl;
             break;
@@ -241,17 +257,19 @@ void faitUnMouvement (CMatrice & mat) {
         swap(mat[numLigne][numCol],mat[numLigne+1][numCol]);
         break;
     default:
-        cout<<"Choisir z, q, d ou x"<<endl;
+        cout<<"Choisir z, q, d ou s"<<endl;
         break;
     }
 }
 
 //***********************************************************************************/
-//*********************************   Niveaux   *************************************/
+//****************************   Choix configuration   ******************************/
 //***********************************************************************************/
 
+
+// choix taille matrice (min 4, max 20) et choix nombre de coups
 /*
-void creeNiveau(){
+void creeConfig(){
     CMatrice mat;
     cout << "quel taille de matrice : ";
     unsigned taille;
@@ -287,15 +305,15 @@ void creeNiveau(){
 int ppal ();
 
 void afficheMenu(){
-    unsigned navigation = 0;
+    unsigned navigation = 1;
     cout << "------------------------" << endl;
     cout << "|     Candy Crush     |" << endl;
     cout << "------------------------" << endl;
-    cout << "| 1. Niveau 1         |" << endl;
-    cout << "| 2. Niveau 2         |" << endl;
-    cout << "| 3. Niveau 3         |" << endl;
+    cout << "| 1. Config 1         |" << endl;
+    cout << "| 2. Config 2         |" << endl;
+    cout << "| 3. Config 3         |" << endl;
     cout << "| 4. Personnalise     |" << endl;
-    cout << "| 5. Creation niveaux |" << endl;
+    cout << "| 5. Creation A a Z   |" << endl;
     cout << "------------------------" << endl;
 
     cin >> navigation;
@@ -328,9 +346,25 @@ void afficheMenu(){
         break;
     case 5:
         clearScreen();
-        //creeNiveau();
+        //creeConfig();
         break;
     }
+}
+
+//***********************************************************************************/
+//****************************   Choix configuration   ******************************/
+//***********************************************************************************/
+
+// Niveau 2 : matrice de départ avec aucun chiffres identiques à côté
+
+void MenuNiveaux(){
+    cout << "------------------------" << endl;
+    cout << "|     Candy Crush     |" << endl;
+    cout << "------------------------" << endl;
+    cout << "| 1. Niveau simple    |" << endl;
+    cout << "| 2. Niveau expert    |" << endl;
+    cout << "| 3. Personnalise     |" << endl;
+    cout << "------------------------" << endl;
 }
 
 //***********************************************************************************/
@@ -343,13 +377,22 @@ int ppal (){
     int nbCoups (0);
     int nbCoupsMax (10);
     int score (0);
+    int niveau (0);
     initParams(params);
     chargerParametre(params, "../number_crush/config.yaml");
     initMat(mat,params);
+    MenuNiveaux();
+    cin >> niveau;
+    if (niveau == 3){
+        cout << "Choisissez le nombre de coups maximal : ";
+        cin >> nbCoupsMax;
+        cout << "Choisissez entre niveau simple (1) et niveau expert (2) : ";
+        cin >> niveau;
+    }
     while((nbCoupsMax - nbCoups)>0){
-        while (detectionExplositionUneBombeVerticale(mat, score, nbCoups) || detectionExplositionUneBombeHorizontale(mat, score, nbCoups)) {
-            detectionExplositionUneBombeHorizontale (mat, score, nbCoups);
-            detectionExplositionUneBombeVerticale (mat, score, nbCoups);
+        while (detectionExplositionUneBombeVerticale(mat, score, nbCoups, niveau) || detectionExplositionUneBombeHorizontale(mat, score, nbCoups, niveau)) {
+            detectionExplositionUneBombeHorizontale (mat, score, nbCoups, niveau);
+            detectionExplositionUneBombeVerticale (mat, score, nbCoups, niveau);
 
         }
         afficheMatriceV2(mat);
