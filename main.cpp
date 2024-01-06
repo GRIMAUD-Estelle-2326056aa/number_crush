@@ -115,7 +115,7 @@ void explositionUneBombeHorizontale (CMatrice & mat, const size_t & numLigne, co
     }
 }
 
-bool detectionExplositionUneBombeHorizontale (CMatrice & mat){
+bool detectionExplositionUneBombeHorizontale (CMatrice & mat, int & score, int & nbCoups){
     bool auMoinsUneExplosion (false);
     //on parcourt la matrice case / case
     for (size_t numLigne (0); numLigne < mat.size(); ++numLigne){
@@ -137,6 +137,9 @@ bool detectionExplositionUneBombeHorizontale (CMatrice & mat){
                 //afficheMatriceV2(mat);
                 explositionUneBombeHorizontale (mat, numLigne, numCol, combienALaSuite);
                 remplirMatrice(mat);
+                if (nbCoups>0){
+                    score += 1;
+                }
                 //cout << string (20, '-') << endl << "matrice après suppresion" << endl;
                 //afficheMatriceV2(mat);
             }
@@ -161,7 +164,7 @@ void explositionUneBombeVerticale (CMatrice & mat, const size_t & numLigne,
     }
 }
 
-bool detectionExplositionUneBombeVerticale (CMatrice & mat){
+bool detectionExplositionUneBombeVerticale (CMatrice & mat, int & score, int & nbCoups){
     bool auMoinsUneExplosion (false);
     // on parcourt la matrice case / case
     for (size_t numCol (0); numCol < /*10*/ mat[0].size(); ++numCol){
@@ -183,6 +186,9 @@ bool detectionExplositionUneBombeVerticale (CMatrice & mat){
                             //afficheMatriceV2(mat);
                             explositionUneBombeVerticale(mat, numLigne, numCol, combienALaSuite);
                             remplirMatrice(mat);
+                            if (nbCoups>0){
+                                score += 1;
+                            }
                             //cout << string (20, '-') << endl << "matrice après suppresion" << endl;
                             //afficheMatriceV2(mat);
             }
@@ -245,6 +251,7 @@ void faitUnMouvement (CMatrice & mat) {
 //*********************************   Niveaux   *************************************/
 //***********************************************************************************/
 
+/*
 void creeNiveau(){
     CMatrice mat;
     cout << "quel taille de matrice : ";
@@ -276,6 +283,7 @@ void creeNiveau(){
     faitUnMouvement (mat);
     afficheMatriceV2(mat);
 }
+*/
 
 int ppal ();
 
@@ -321,7 +329,7 @@ void afficheMenu(){
         break;
     case 5:
         clearScreen();
-        creeNiveau();
+        //creeNiveau();
         break;
     }
 }
@@ -330,6 +338,7 @@ void afficheMenu(){
 //************************************   Tests   ************************************/
 //***********************************************************************************/
 
+/*
 int ppalExo01 (){
     CMatrice mat = {};
     initMat(mat);
@@ -390,7 +399,6 @@ int ppalExo03 (){
     return 0;
 }
 
-/*
 int ppalExo04 (){
     CMatrice mat;
     initMat(mat);
@@ -415,7 +423,6 @@ int ppalExo04 (){
     }
     return 0;
 }
-*/
 
 int ppalExo06 (){
     CMatrice mat;
@@ -428,24 +435,31 @@ int ppalExo06 (){
     afficheMatriceV2 (mat);
     return 0;
 }
+*/
 
 int ppal (){
     CMatrice mat;
     CMyParam params;
-    int nbCoups (100);
+    int nbCoups (0);
+    int nbCoupsMax (10);
+    int score (0);
     initParams(params);
     chargerParametre(params, "../number_crush/config.yaml");
     initMat(mat,params);
-    while(nbCoups>0){
-        while (detectionExplositionUneBombeVerticale(mat) || detectionExplositionUneBombeHorizontale(mat)) {
-            detectionExplositionUneBombeHorizontale (mat);
-            detectionExplositionUneBombeVerticale (mat);
+    while((nbCoupsMax - nbCoups)>0){
+        while (detectionExplositionUneBombeVerticale(mat, score, nbCoups) || detectionExplositionUneBombeHorizontale(mat, score, nbCoups)) {
+            detectionExplositionUneBombeHorizontale (mat, score, nbCoups);
+            detectionExplositionUneBombeVerticale (mat, score, nbCoups);
+
         }
         afficheMatriceV2(mat);
-        cout << "Vous avez " << nbCoups << " coups a jouer" << endl;
+        cout << "Vous avez " << (nbCoupsMax - nbCoups) << " coups a jouer" << endl;
+        cout << "Votre score est de " << score << " points" << endl;
         faitUnMouvement (mat);
-        nbCoups -= 1;
+        nbCoups += 1;
     }
+    cout << "C'est la fin de la partie !" << endl;
+    cout << "Votre score final est de " << score << " points" << endl;
     return 0;
 }
 
