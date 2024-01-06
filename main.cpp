@@ -130,14 +130,14 @@ bool detectionExplositionUneBombeHorizontale (CMatrice & mat){
             //si on a au moins 3 chiffres identiques a la suite
             if (combienALaSuite >= 3){
                 auMoinsUneExplosion = true;
-                cout << "on a une suite en position numLigne = " << numLigne
-                     << "; colonne = " << numCol
-                     << "; sur  " << combienALaSuite << " cases" << endl;
-                cout << string (20, '-') << endl << "matrice avant suppresion" << endl;
+                //cout << "on a une suite en position numLigne = " << numLigne
+                //     << "; colonne = " << numCol
+                //     << "; sur  " << combienALaSuite << " cases" << endl;
+                //cout << string (20, '-') << endl << "matrice avant suppresion" << endl;
                 //afficheMatriceV2(mat);
                 explositionUneBombeHorizontale (mat, numLigne, numCol, combienALaSuite);
                 remplirMatrice(mat);
-                cout << string (20, '-') << endl << "matrice après suppresion" << endl;
+                //cout << string (20, '-') << endl << "matrice après suppresion" << endl;
                 //afficheMatriceV2(mat);
             }
         }
@@ -176,14 +176,14 @@ bool detectionExplositionUneBombeVerticale (CMatrice & mat){
             //si on a aun moins 3 chiffres identiques a la suite
             if (combienALaSuite >= 3){
                             auMoinsUneExplosion = true;
-                            cout << "on a une suite en position numLigne = " << numLigne
-                                 << "; colonne = " << numCol
-                                 << "; sur  " << combienALaSuite << " cases" << endl;
-                            cout << string (20, '-') << endl << "matrice avant suppresion" << endl;
+                            //cout << "on a une suite en position numLigne = " << numLigne
+                            //     << "; colonne = " << numCol
+                            //     << "; sur  " << combienALaSuite << " cases" << endl;
+                            //cout << string (20, '-') << endl << "matrice avant suppresion" << endl;
                             //afficheMatriceV2(mat);
                             explositionUneBombeVerticale(mat, numLigne, numCol, combienALaSuite);
                             remplirMatrice(mat);
-                            cout << string (20, '-') << endl << "matrice après suppresion" << endl;
+                            //cout << string (20, '-') << endl << "matrice après suppresion" << endl;
                             //afficheMatriceV2(mat);
             }
         }
@@ -200,10 +200,10 @@ void faitUnMouvement (CMatrice & mat) {
     cout << "Numero de ligne : ";
     unsigned numLigne;
     cin >> numLigne;
-    cout << endl << "Numero de colonne : ";
+    cout << "Numero de colonne : ";
     unsigned numCol;
     cin >> numCol;
-    cout << endl << "Choisir A, Z, E, Q, D, X, C ou V pour se deplacer : ";
+    cout << "Choisir A, Z, E, Q, D, X, C ou V pour se deplacer : ";
     char deplacement;
     cin >> deplacement;
     switch (tolower(deplacement)) {
@@ -431,17 +431,21 @@ int ppalExo06 (){
 
 int ppal (){
     CMatrice mat;
-    initMat(mat, 10, 10);
-    // affichage de la matrice sans les numéros de lignes / colonnes en haut / à gauche
-    afficheMatriceV2(mat);
-    while (detectionExplositionUneBombeVerticale(mat) || detectionExplositionUneBombeHorizontale(mat)) {
-        //showMatrixV2 (mat);
-        detectionExplositionUneBombeHorizontale (mat);
-        detectionExplositionUneBombeVerticale (mat);
+    CMyParam params;
+    int nbCoups (100);
+    initParams(params);
+    chargerParametre(params, "../number_crush/config.yaml");
+    initMat(mat,params);
+    while(nbCoups>0){
+        while (detectionExplositionUneBombeVerticale(mat) || detectionExplositionUneBombeHorizontale(mat)) {
+            detectionExplositionUneBombeHorizontale (mat);
+            detectionExplositionUneBombeVerticale (mat);
+        }
+        afficheMatriceV2(mat);
+        cout << "Vous avez " << nbCoups << " coups a jouer" << endl;
+        faitUnMouvement (mat);
+        nbCoups -= 1;
     }
-    afficheMatriceV2(mat);
-    faitUnMouvement (mat);
-    afficheMatriceV2(mat);
     return 0;
 }
 
