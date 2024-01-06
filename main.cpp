@@ -359,22 +359,6 @@ void MenuNiveaux(){
 //*************************************   Jeu   *************************************/
 //***********************************************************************************/
 
-/*
-void configMatrice(int & navigation){
-    CMatrice mat;
-    if (navigation == 5){
-            creeConfig();
-    }
-    else{
-            CMyParam params;
-            initParams(params);
-            chargerParametre(params, "../number_crush/config.yaml");
-            initMat(mat,params);
-    }
-    ppal(mat);
-}
-*/
-
 int ppal (){
     CMatrice mat;
     int nbCoups (0);
@@ -410,7 +394,7 @@ int ppal (){
 
         }
         afficheMatriceV2(mat);
-        cout << "Vous avez " << (nbCoupsMax - nbCoups) << " coups a jouer" << endl;
+        cout << "Vous avez " << (nbCoupsMax - nbCoups) << " coup(s) a jouer" << endl;
         cout << "Votre score est de " << score << " point(s)" << endl;
         faitUnMouvement (mat, nbCoups);
     }
