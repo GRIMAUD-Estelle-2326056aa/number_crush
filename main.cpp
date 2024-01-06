@@ -88,10 +88,14 @@ void initMat(CMatrice & mat, const CMyParam & params){
 }
 
 void remplirMatrice(CMatrice & mat, const unsigned & nbMax= KPlusGrandNombreDansLaMatrice){
-    for (size_t numLigne = 0; numLigne < mat.size(); ++numLigne) {
-        for (size_t numCol = 0; numCol < mat[numLigne].size(); ++numCol) {
-            if (mat[numLigne][numCol]== KAIgnorer){
-                mat[numLigne][numCol] = rand() % nbMax + 1;
+    for (size_t numLigne (0); numLigne < mat.size(); ++numLigne){
+        for (size_t numCol (0); numCol < mat[numLigne].size(); ++numCol){
+            if(mat[numLigne][numCol] == KAIgnorer){//si val = ID trois horiz.
+                if(numLigne==0){//si cest la premiere ligne
+                    mat[numLigne][numCol] = 1+rand()%(nbMax);
+                }else{
+                    mat[numLigne][numCol] = mat[numLigne-1][numCol];
+                }
             }
         }
     }
@@ -102,8 +106,7 @@ void remplirMatrice(CMatrice & mat, const unsigned & nbMax= KPlusGrandNombreDans
 //***********************************************************************************/
 
 //fait descendre toutes les cases d'une unité suite à une explosition
-void explositionUneBombeHorizontale (CMatrice & mat, const size_t & numLigne,
-                                    const size_t & numColonne, const size_t & combien){
+void explositionUneBombeHorizontale (CMatrice & mat, const size_t & numLigne, const size_t & numColonne, const size_t & combien){
     for (size_t j (numColonne); j < numColonne + combien; ++j){
         for (size_t i (numLigne); i>0; --i){
             mat [i][j] = mat[i-1][j];
@@ -112,15 +115,12 @@ void explositionUneBombeHorizontale (CMatrice & mat, const size_t & numLigne,
     }
 }
 
-//
 bool detectionExplositionUneBombeHorizontale (CMatrice & mat){
     bool auMoinsUneExplosion (false);
-    //size_t numLigne;
-    //size_t numCol;
-    //on parcours la matrice case / case
+    //on parcourt la matrice case / case
     for (size_t numLigne (0); numLigne < mat.size(); ++numLigne){
         for (size_t numCol (0); numCol < mat[numLigne].size(); ++numCol){
-            // si on tombe sur la valeur KAIgnorer, on passe a la case suivante
+            // si on tombe sur la valeur KAIgnorer, on passe à la case suivante
             if (KAIgnorer == mat [numLigne][numCol]) continue;
             // sinon on compte combien de fois on a la même valeur
             size_t combienALaSuite (1);
@@ -134,11 +134,11 @@ bool detectionExplositionUneBombeHorizontale (CMatrice & mat){
                      << "; colonne = " << numCol
                      << "; sur  " << combienALaSuite << " cases" << endl;
                 cout << string (20, '-') << endl << "matrice avant suppresion" << endl;
-                afficheMatriceV2(mat);
+                //afficheMatriceV2(mat);
                 explositionUneBombeHorizontale (mat, numLigne, numCol, combienALaSuite);
                 remplirMatrice(mat);
                 cout << string (20, '-') << endl << "matrice après suppresion" << endl;
-                            afficheMatriceV2(mat);
+                //afficheMatriceV2(mat);
             }
         }
     }
@@ -163,8 +163,7 @@ void explositionUneBombeVerticale (CMatrice & mat, const size_t & numLigne,
 
 bool detectionExplositionUneBombeVerticale (CMatrice & mat){
     bool auMoinsUneExplosion (false);
-    //size_t numCol;
-    //on parcours la matrice case / case
+    // on parcourt la matrice case / case
     for (size_t numCol (0); numCol < /*10*/ mat[0].size(); ++numCol){
         for (size_t numLigne (0); numLigne < mat.size(); ++numLigne){
             // si on tombe sur la valeur KAIgnorer, on passe a la case suivante
@@ -181,11 +180,11 @@ bool detectionExplositionUneBombeVerticale (CMatrice & mat){
                                  << "; colonne = " << numCol
                                  << "; sur  " << combienALaSuite << " cases" << endl;
                             cout << string (20, '-') << endl << "matrice avant suppresion" << endl;
-                            afficheMatriceV1(mat);
+                            //afficheMatriceV2(mat);
                             explositionUneBombeVerticale(mat, numLigne, numCol, combienALaSuite);
                             remplirMatrice(mat);
                             cout << string (20, '-') << endl << "matrice après suppresion" << endl;
-                            afficheMatriceV1(mat);
+                            //afficheMatriceV2(mat);
             }
         }
     }
@@ -196,11 +195,18 @@ bool detectionExplositionUneBombeVerticale (CMatrice & mat){
 //********************************   Mouvements   ***********************************/
 //***********************************************************************************/
 
-void faitUnMouvement (CMatrice & mat, const char & deplacment, size_t & numLigne, size_t & numCol) {
-    numLigne = numLigne - 1;
-    numCol = numCol - 1;
-    //size_t nouvellePositionLigne (numLigne), nouvellePositionColonne (numCol);
-    switch (tolower(deplacment)) {
+void faitUnMouvement (CMatrice & mat) {
+    cout << "Entre les coordonnees du numero a deplacer" << endl;
+    cout << "Numero de ligne : ";
+    unsigned numLigne;
+    cin >> numLigne;
+    cout << endl << "Numero de colonne : ";
+    unsigned numCol;
+    cin >> numCol;
+    cout << endl << "Choisir A, Z, E, Q, D, X, C ou V pour se deplacer : ";
+    char deplacement;
+    cin >> deplacement;
+    switch (tolower(deplacement)) {
     case 'z':
         if (numLigne==0){
             cout << "erreur" << endl;
@@ -230,7 +236,92 @@ void faitUnMouvement (CMatrice & mat, const char & deplacment, size_t & numLigne
         swap(mat[numLigne][numCol],mat[numLigne+1][numCol]);
         break;
     default:
-        cout<<"Tu choisis A ou Z ou E  ou Q ou D ou X ou C ou V"<<endl;
+        cout<<"Tu choisis A, Z, E, Q, D, X, C ou V"<<endl;
+        break;
+    }
+}
+
+//***********************************************************************************/
+//*********************************   Niveaux   *************************************/
+//***********************************************************************************/
+
+void creeNiveau(){
+    CMatrice mat;
+    cout << "quel taille de matrice : ";
+    unsigned taille;
+    cin >> taille;
+    mat.resize(taille);
+    for (CVLigne & uneLigne : mat)
+        uneLigne.resize(taille);
+    for (size_t numLigne (0); numLigne < mat.size(); ++numLigne)
+        for (size_t numCol (0); numCol < mat[numLigne].size(); ++numCol){
+            mat [numLigne][numCol] = 1;}
+    for (size_t numLigne (0); numLigne < mat.size(); ++numLigne){
+        for (size_t numCol (0); numCol < mat[numLigne].size(); ++numCol){
+            unsigned remplir;
+            mat [numLigne][numCol] = 0;
+            afficheMatriceV2(mat);
+            couleur (KReset);
+            cin >> remplir;
+            mat [numLigne][numCol] = remplir;
+        }
+    }
+    afficheMatriceV2(mat);
+    while (detectionExplositionUneBombeVerticale(mat) || detectionExplositionUneBombeHorizontale(mat)) {
+        //showMatrixV2 (mat);
+        detectionExplositionUneBombeHorizontale (mat);
+        detectionExplositionUneBombeVerticale (mat);
+    }
+    afficheMatriceV2(mat);
+    faitUnMouvement (mat);
+    afficheMatriceV2(mat);
+}
+
+int ppal ();
+
+void afficheMenu(){
+    unsigned navigation = 0;
+    cout << "------------------------" << endl;
+    cout << "|     Candy Crush     |" << endl;
+    cout << "------------------------" << endl;
+    cout << "| 1. Niveau 1         |" << endl;
+    cout << "| 2. Niveau 2         |" << endl;
+    cout << "| 3. Niveau 3         |" << endl;
+    cout << "| 4. Personnalise     |" << endl;
+    cout << "| 5. Creation niveaux |" << endl;
+    cout << "------------------------" << endl;
+
+    cin >> navigation;
+    switch (navigation) {
+    case 1:
+        clearScreen();
+        srand(1);
+        ppal();
+        break;
+    case 2:
+        clearScreen();
+        srand(2);
+        ppal();
+        break;
+    case 3:
+        clearScreen();
+        srand(4);
+        ppal();
+        break;
+    case 4:
+        clearScreen();
+        cout << "------------------------" << endl;
+        cout << "|     Candy Crush     |" << endl;
+        cout << "------------------------" << endl;
+        cout << " Rentrer la graine : " << endl;
+        unsigned seed;
+        cin >> seed;
+        srand(seed);
+        ppal();
+        break;
+    case 5:
+        clearScreen();
+        creeNiveau();
         break;
     }
 }
@@ -293,7 +384,7 @@ int ppalExo03 (){
         cout << "Sens du deplacement : (A|Z|E|Q|D|W|X|C) : " << endl;
         char deplacement;
         cin >> deplacement;
-        faitUnMouvement (mat, deplacement, numLigne, numCol);
+        //faitUnMouvement (mat, deplacement, numLigne, numCol);
         afficheMatriceV2 (mat);
     }
     return 0;
@@ -338,33 +429,28 @@ int ppalExo06 (){
     return 0;
 }
 
+int ppal (){
+    CMatrice mat;
+    initMat(mat, 10, 10);
+    // affichage de la matrice sans les numéros de lignes / colonnes en haut / à gauche
+    afficheMatriceV2(mat);
+    while (detectionExplositionUneBombeVerticale(mat) || detectionExplositionUneBombeHorizontale(mat)) {
+        //showMatrixV2 (mat);
+        detectionExplositionUneBombeHorizontale (mat);
+        detectionExplositionUneBombeVerticale (mat);
+    }
+    afficheMatriceV2(mat);
+    faitUnMouvement (mat);
+    afficheMatriceV2(mat);
+    return 0;
+}
+
 //***********************************************************************************/
 //*************************************   Main   ************************************/
 //***********************************************************************************/
 
 int main() {
-
-    ppalExo06();
-    srand (time(NULL));
-    // ---------Exercice 2 -----------------//
-    //    clearScreen();
-
-    //    CMatrix mat (10, CVLine (10, kEmpty));
-    //    mat [0][mat.size()-1] = kTokenPlayer1;
-    //    mat [mat.size()-1][0] = kTokenPlayer2;
-    //    showMatrix(mat);
-    //-------------------------------------//
-    //return 0;
-
-    // ---------Exercice 2 -----------------//
-    //return ppalExo02();
-    //-------------------------------------//
-
-    // ---------Exercice 3 -----------------//
-    //return ppalExo03();
-    //-------------------------------------//
-
-    // ---------Exercice 3 -----------------//
-    //return ppalExo04();
-    //-------------------------------------//
+    afficheMenu();
+    //ppalExo06();
+    //srand (time(NULL));
 }

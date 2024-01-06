@@ -57,45 +57,68 @@ void  afficheMatriceV1 (const CMatrice & Mat) {
 // avec un fond de couleur
 // et mis en forme
 void  afficheMatriceV2 (const CMatrice & mat) {
-    //TODO
-    cout << "  ";
-    for (size_t k = 0; k < mat[0].size(); ++k){
-        cout << setw(4) << k+1;
+    unsigned leSetw (3);
+    string uneLigneHorizontalePleine (2* (mat[0].size()-1)*(leSetw)+3, '-');
+
+    cout << uneLigneHorizontalePleine << endl;
+
+    //la premiere ligne avec les numéros bien places
+    //sur fond rouge pour cette ligne
+    cout << setw(leSetw + 3) << ' ' << '|';
+    for (size_t i (0); i < mat[0].size(); ++i){
+        couleur (KBGMagenta);
+        cout << setw(leSetw) << i;
+        cout << " ";
+        couleur (KReset);
+        cout << "|";
     }
     cout << endl;
-    for (size_t i = 0; i < mat.size(); ++i) {
-        cout << setw(2) << i+1 << " ";
-        cout << "|";
-        for (size_t j = 0; j < mat[0].size(); ++j) {
-            if (mat[i][j] == 1){
-                couleur(KNoir);
+    cout << uneLigneHorizontalePleine << endl;
+
+    //on doit afficher le numero des lignes
+    //=> pas de boucle for each
+    //for (const CVLigne & uneLigne : mat){
+    for (size_t numLigne (0); numLigne < mat.size(); ++numLigne){
+        couleur (KBGMagenta);
+        cout << setw(leSetw +1) << numLigne;
+        cout << " ";
+        couleur (KReset);
+        cout << " | ";
+        for (const int & cell : mat[numLigne]){
+            switch (cell){
+            case KAIgnorer :
+                couleur (KBGNoir);
+                break;
+            case 1:
+                couleur (KRouge);
+                break;
+            case 2:
+                couleur (KBleu);
+                break;
+            case 3:
+                couleur (KJaune);
+                break;
+            case 4:
+                couleur (KVert);
+                break;
+            case 5:
+                couleur (KCyan);
+                break;
+            case 6:
+                couleur (KMAgenta);
+                break;
+            case 7:
+                couleur (KNoir);
+                break;
             }
-            if (mat[i][j] == 2){
-                couleur(KRouge);
-            }
-            if (mat[i][j] == 3){
-                couleur(KBleu);
-            }
-            if (mat[i][j] == 4){
-                couleur(KCyan);
-            }
-            if (mat[i][j] == 5){
-                couleur(KVert);
-            }
-            if (mat[i][j] == 6){
-                couleur(KJaune);
-            }
-            if (mat[i][j] == 7){
-                couleur(KMAgenta);
-            }
-            if (mat[i][j] == KAIgnorer){
-                couleur(KBGCyan);
-                couleur(KCyan);
-            }
-            cout << " " << mat[i][j] << " ";
-            couleur(KReset);
-            cout << "|";
+            cout << setw(leSetw-2);
+            cout << ((cell == KAIgnorer) ? " " : to_string(cell));
+            couleur (KReset);
+            cout << "  | " ;
         }
+        couleur (KReset);
         cout << endl;
     }
+
+    cout << uneLigneHorizontalePleine << endl;
 }

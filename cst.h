@@ -16,6 +16,7 @@ const unsigned KCyan    (36);
 const unsigned KBGNoir    (40);
 const unsigned KBGRouge   (41);
 const unsigned KGBBleu    (44);
+const unsigned KBGMagenta (45);
 const unsigned KBGCyan    (46);
 
 const contenueDUneCase KAIgnorer = 0;
