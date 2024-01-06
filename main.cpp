@@ -216,7 +216,7 @@ bool detectionExplositionUneBombeVerticale (CMatrice & mat, int & score, int & n
 //********************************   Mouvements   ***********************************/
 //***********************************************************************************/
 
-void faitUnMouvement (CMatrice & mat) {
+void faitUnMouvement (CMatrice & mat, int & nbCoups) {
     cout << "Entrez les coordonnees du numero a deplacer" << endl;
     cout << "Numero de ligne : ";
     unsigned numLigne;
@@ -234,6 +234,7 @@ void faitUnMouvement (CMatrice & mat) {
             break;
         }
         swap(mat[numLigne][numCol],mat[numLigne-1][numCol]);
+        nbCoups += 1;
         break;
     case 'q':
         if (numCol==0){
@@ -241,6 +242,7 @@ void faitUnMouvement (CMatrice & mat) {
             break;
         }
         swap(mat[numLigne][numCol],mat[numLigne][numCol-1]);
+        nbCoups += 1;
         break;
     case 'd':
         if (numCol==mat[numLigne].size()-1){
@@ -248,6 +250,7 @@ void faitUnMouvement (CMatrice & mat) {
             break;
         };
         swap(mat[numLigne][numCol],mat[numLigne][numCol+1]);
+        nbCoups += 1;
         break;
     case 's':
         if (numLigne==mat.size()-1){
@@ -255,6 +258,7 @@ void faitUnMouvement (CMatrice & mat) {
             break;
         }
         swap(mat[numLigne][numCol],mat[numLigne+1][numCol]);
+        nbCoups += 1;
         break;
     default:
         cout<<"Choisir z, q, d ou s"<<endl;
@@ -263,49 +267,41 @@ void faitUnMouvement (CMatrice & mat) {
 }
 
 //***********************************************************************************/
-//****************************   Choix configuration   ******************************/
+//************************   Choix configuration et niveaux   **************************/
 //***********************************************************************************/
 
+int ppal();
 
-// choix taille matrice (min 4, max 20) et choix nombre de coups
-/*
-void creeConfig(){
+CMatrice creeConfig(){
     CMatrice mat;
-    cout << "quel taille de matrice : ";
-    unsigned taille;
-    cin >> taille;
-    mat.resize(taille);
-    for (CVLigne & uneLigne : mat)
-        uneLigne.resize(taille);
+    size_t nbLignes;
+    size_t nbColonnes;
+    // redimension matrice
+    cout << "Quelle taille de matrice voulez-vous ?" << endl;
+    cout << "Nombre de lignes : ";
+    cin >> nbLignes;
+    cout << "Nombre de colonnes : ";
+    cin >> nbColonnes;
+    mat.resize(nbLignes, vector<contenueDUneCase>(nbColonnes));
+    //
     for (size_t numLigne (0); numLigne < mat.size(); ++numLigne)
         for (size_t numCol (0); numCol < mat[numLigne].size(); ++numCol){
-            mat [numLigne][numCol] = 1;}
+            mat [numLigne][numCol] = 0;}
     for (size_t numLigne (0); numLigne < mat.size(); ++numLigne){
         for (size_t numCol (0); numCol < mat[numLigne].size(); ++numCol){
             unsigned remplir;
-            mat [numLigne][numCol] = 0;
+            cout << "Remplissez la case a la ligne " << numLigne << " et a la colonne " << numCol << endl;
             afficheMatriceV2(mat);
-            couleur (KReset);
             cin >> remplir;
             mat [numLigne][numCol] = remplir;
         }
     }
     afficheMatriceV2(mat);
-    while (detectionExplositionUneBombeVerticale(mat) || detectionExplositionUneBombeHorizontale(mat)) {
-        //showMatrixV2 (mat);
-        detectionExplositionUneBombeHorizontale (mat);
-        detectionExplositionUneBombeVerticale (mat);
-    }
-    afficheMatriceV2(mat);
-    faitUnMouvement (mat);
-    afficheMatriceV2(mat);
+    return mat;
 }
-*/
 
-int ppal ();
-
-void afficheMenu(){
-    unsigned navigation = 1;
+int menuConfig(){
+    int config = 1;
     cout << "------------------------" << endl;
     cout << "|     Candy Crush     |" << endl;
     cout << "------------------------" << endl;
@@ -316,48 +312,40 @@ void afficheMenu(){
     cout << "| 5. Creation A a Z   |" << endl;
     cout << "------------------------" << endl;
 
-    cin >> navigation;
-    switch (navigation) {
-    case 1:
-        clearScreen();
-        srand(1);
-        ppal();
-        break;
-    case 2:
-        clearScreen();
-        srand(2);
-        ppal();
-        break;
-    case 3:
-        clearScreen();
-        srand(4);
-        ppal();
-        break;
-    case 4:
-        clearScreen();
-        cout << "------------------------" << endl;
-        cout << "|     Candy Crush     |" << endl;
-        cout << "------------------------" << endl;
-        cout << " Rentrer la graine : " << endl;
-        unsigned seed;
-        cin >> seed;
-        srand(seed);
-        ppal();
-        break;
-    case 5:
-        clearScreen();
-        //creeConfig();
-        break;
+    cin >> config;
+    switch (config) {
+        case 1:
+            clearScreen();
+            srand(1);
+            break;
+        case 2:
+            clearScreen();
+            srand(2);
+            break;
+        case 3:
+            clearScreen();
+            srand(5);
+            break;
+        case 4:
+            clearScreen();
+            cout << "------------------------" << endl;
+            cout << "|     Candy Crush     |" << endl;
+            cout << "------------------------" << endl;
+            cout << " Rentrer la graine : ";
+            unsigned seed;
+            cin >> seed;
+            srand(seed);
+            break;
+        case 5:
+            clearScreen();
+            break;
     }
+    return config;
 }
 
-//***********************************************************************************/
-//****************************   Choix configuration   ******************************/
-//***********************************************************************************/
-
-// Niveau 2 : matrice de départ avec aucun chiffres identiques à côté
-
+// choix niveau
 void MenuNiveaux(){
+    clearScreen();
     cout << "------------------------" << endl;
     cout << "|     Candy Crush     |" << endl;
     cout << "------------------------" << endl;
@@ -371,16 +359,41 @@ void MenuNiveaux(){
 //*************************************   Jeu   *************************************/
 //***********************************************************************************/
 
+/*
+void configMatrice(int & navigation){
+    CMatrice mat;
+    if (navigation == 5){
+            creeConfig();
+    }
+    else{
+            CMyParam params;
+            initParams(params);
+            chargerParametre(params, "../number_crush/config.yaml");
+            initMat(mat,params);
+    }
+    ppal(mat);
+}
+*/
+
 int ppal (){
     CMatrice mat;
-    CMyParam params;
     int nbCoups (0);
     int nbCoupsMax (10);
     int score (0);
     int niveau (0);
-    initParams(params);
-    chargerParametre(params, "../number_crush/config.yaml");
-    initMat(mat,params);
+    int config (0);
+    // choix configuration matrice
+    config = menuConfig();
+    if (config==5){
+        mat = creeConfig();
+    }
+    else{
+        CMyParam params;
+        initParams(params);
+        chargerParametre(params, "../number_crush/config.yaml");
+        initMat(mat,params);
+    }
+    // choix niveau
     MenuNiveaux();
     cin >> niveau;
     if (niveau == 3){
@@ -389,6 +402,7 @@ int ppal (){
         cout << "Choisissez entre niveau simple (1) et niveau expert (2) : ";
         cin >> niveau;
     }
+    // jeu
     while((nbCoupsMax - nbCoups)>0){
         while (detectionExplositionUneBombeVerticale(mat, score, nbCoups, niveau) || detectionExplositionUneBombeHorizontale(mat, score, nbCoups, niveau)) {
             detectionExplositionUneBombeHorizontale (mat, score, nbCoups, niveau);
@@ -397,12 +411,12 @@ int ppal (){
         }
         afficheMatriceV2(mat);
         cout << "Vous avez " << (nbCoupsMax - nbCoups) << " coups a jouer" << endl;
-        cout << "Votre score est de " << score << " points" << endl;
-        faitUnMouvement (mat);
-        nbCoups += 1;
+        cout << "Votre score est de " << score << " point(s)" << endl;
+        faitUnMouvement (mat, nbCoups);
     }
+    // fin jeu = nbCoupsMax atteint
     cout << "C'est la fin de la partie !" << endl;
-    cout << "Votre score final est de " << score << " points" << endl;
+    cout << "Votre score final est de " << score << " point(s)" << endl;
     return 0;
 }
 
@@ -411,5 +425,5 @@ int ppal (){
 //***********************************************************************************/
 
 int main() {
-    afficheMenu();
+    ppal();
 }
