@@ -1,3 +1,7 @@
 nbLignes : 5;
 nbColonnes : 12;
 nbMax : 5;
+toucheHaut : o;
+toucheGauche : k;
+toucheBas : l;
+toucheDroite : m;

@@ -216,6 +216,72 @@ bool detectionExplositionUneBombeVerticale (CMatrice & mat, int & score, int & n
 //********************************   Mouvements   ***********************************/
 //***********************************************************************************/
 
+void faitUnMouvement (CMatrice & mat, CMyParam & params, int & nbCoups) {
+    cout << "Entrez les coordonnees du numero a deplacer" << endl;
+    cout << "Numero de ligne : ";
+    unsigned numLigne;
+    cin >> numLigne;
+    cout << "Numero de colonne : ";
+    unsigned numCol;
+    cin >> numCol;
+    cout << "Appuyez sur une touche de deplacement pour vous deplacer : ";
+    char deplacement;
+    cin >> deplacement;
+    if (params.mapParamChar["toucheHaut"] == tolower(deplacement)){
+        if (numLigne==0){
+            couleur(KRouge);
+            cout << "-------------------------------------------------------" << endl;
+            cout << "Erreur, veuillez faire un deplacement dans la matrice !" << endl;
+            cout << "-------------------------------------------------------" << endl;
+            couleur(KReset);
+        }
+        else {
+            swap(mat[numLigne][numCol],mat[numLigne-1][numCol]);
+            nbCoups += 1;
+        }
+    }
+    if (params.mapParamChar["toucheGauche"] == tolower(deplacement)){
+        if (numCol==0){
+            couleur(KRouge);
+            cout << "-------------------------------------------------------" << endl;
+            cout << "Erreur, veuillez faire un deplacement dans la matrice !" << endl;
+            cout << "-------------------------------------------------------" << endl;
+            couleur(KReset);
+        }
+        else{
+            swap(mat[numLigne][numCol],mat[numLigne][numCol-1]);
+            nbCoups += 1;
+        }
+    }
+    if (params.mapParamChar["toucheDroite"] == tolower(deplacement)){
+        if (numCol==mat[numLigne].size()-1){
+            couleur(KRouge);
+            cout << "-------------------------------------------------------" << endl;
+            cout << "Erreur, veuillez faire un deplacement dans la matrice !" << endl;
+            cout << "-------------------------------------------------------" << endl;
+            couleur(KReset);
+        }
+        else {
+            swap(mat[numLigne][numCol],mat[numLigne][numCol+1]);
+            nbCoups += 1;
+        }
+    }
+    if (params.mapParamChar["toucheBas"] == tolower(deplacement)){
+        if (numLigne==mat.size()-1){
+            couleur(KRouge);
+            cout << "-------------------------------------------------------" << endl;
+            cout << "Erreur, veuillez faire un deplacement dans la matrice !" << endl;
+            cout << "-------------------------------------------------------" << endl;
+            couleur(KReset);
+        }
+        else {
+            swap(mat[numLigne][numCol],mat[numLigne+1][numCol]);
+            nbCoups += 1;
+        }
+    }
+}
+
+/*
 void faitUnMouvement (CMatrice & mat, int & nbCoups) {
     cout << "Entrez les coordonnees du numero a deplacer" << endl;
     cout << "Numero de ligne : ";
@@ -228,43 +294,44 @@ void faitUnMouvement (CMatrice & mat, int & nbCoups) {
     char deplacement;
     cin >> deplacement;
     switch (tolower(deplacement)) {
-    case 'z':
-        if (numLigne==0){
-            cout << "erreur" << endl;
+        case 'z':
+            if (numLigne==0){
+                cout << "erreur" << endl;
+                break;
+            }
+            swap(mat[numLigne][numCol],mat[numLigne-1][numCol]);
+            nbCoups += 1;
             break;
-        }
-        swap(mat[numLigne][numCol],mat[numLigne-1][numCol]);
-        nbCoups += 1;
-        break;
-    case 'q':
-        if (numCol==0){
-            cout << "erreur" << endl;
+        case 'q':
+            if (numCol==0){
+                cout << "erreur" << endl;
+                break;
+            }
+            swap(mat[numLigne][numCol],mat[numLigne][numCol-1]);
+            nbCoups += 1;
             break;
-        }
-        swap(mat[numLigne][numCol],mat[numLigne][numCol-1]);
-        nbCoups += 1;
-        break;
-    case 'd':
-        if (numCol==mat[numLigne].size()-1){
-            cout << "erreur" << endl;
+        case 'd':
+            if (numCol==mat[numLigne].size()-1){
+                cout << "erreur" << endl;
+                break;
+            };
+            swap(mat[numLigne][numCol],mat[numLigne][numCol+1]);
+            nbCoups += 1;
             break;
-        };
-        swap(mat[numLigne][numCol],mat[numLigne][numCol+1]);
-        nbCoups += 1;
-        break;
-    case 's':
-        if (numLigne==mat.size()-1){
-            cout << "erreur" << endl;
+        case 's':
+            if (numLigne==mat.size()-1){
+                cout << "erreur" << endl;
+                break;
+            }
+            swap(mat[numLigne][numCol],mat[numLigne+1][numCol]);
+            nbCoups += 1;
             break;
-        }
-        swap(mat[numLigne][numCol],mat[numLigne+1][numCol]);
-        nbCoups += 1;
-        break;
-    default:
-        cout<<"Choisir z, q, d ou s"<<endl;
-        break;
+        default:
+            cout<<"Choisir z, q, d ou s"<<endl;
+            break;
     }
 }
+*/
 
 //***********************************************************************************/
 //************************   Choix configuration et niveaux   **************************/
@@ -366,15 +433,16 @@ int ppal (){
     int score (0);
     int niveau (0);
     int config (0);
+    // paramètres à partir du fichier config.yaml
+    CMyParam params;
+    initParams(params);
+    chargerParametre(params, "../number_crush/config.yaml");
     // choix configuration matrice
     config = menuConfig();
     if (config==5){
         mat = creeConfig();
     }
     else{
-        CMyParam params;
-        initParams(params);
-        chargerParametre(params, "../number_crush/config.yaml");
         initMat(mat,params);
     }
     // choix niveau
@@ -396,7 +464,7 @@ int ppal (){
         afficheMatriceV2(mat);
         cout << "Vous avez " << (nbCoupsMax - nbCoups) << " coup(s) a jouer" << endl;
         cout << "Votre score est de " << score << " point(s)" << endl;
-        faitUnMouvement (mat, nbCoups);
+        faitUnMouvement(mat, params, nbCoups);
     }
     // fin jeu = nbCoupsMax atteint
     cout << "C'est la fin de la partie !" << endl;
