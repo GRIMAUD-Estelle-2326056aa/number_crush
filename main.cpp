@@ -91,14 +91,10 @@ void initMat(CMatrice & mat, const CMyParam & params){
 
 // fonction permettant de remplir la matrice après une explosion
 void remplirMatrice(CMatrice & mat, const unsigned & nbMax= KPlusGrandNombreDansLaMatrice){
-    for (size_t numLigne (0); numLigne < mat.size(); ++numLigne){
-        for (size_t numCol (0); numCol < mat[numLigne].size(); ++numCol){
-            if(mat[numLigne][numCol] == KAIgnorer){//si val = ID trois horiz.
-                if(numLigne==0){//si cest la premiere ligne
-                    mat[numLigne][numCol] = 1+rand()%(nbMax);
-                }else{
-                    mat[numLigne][numCol] = mat[numLigne-1][numCol];
-                }
+    for (size_t numLigne = 0; numLigne < mat.size(); ++numLigne) {
+        for (size_t numCol = 0; numCol < mat[numLigne].size(); ++numCol) {
+            if (mat[numLigne][numCol]== KAIgnorer){
+                mat[numLigne][numCol] = rand() % nbMax + 1;
             }
         }
     }
@@ -285,14 +281,6 @@ void faitUnMouvement (CMatrice & mat, CMyParam & params, int & nbCoups) {
             nbCoups += 1;
         }
     }
-    // si aucune correspondance entre la valeur entrée et celles des paramètres, affichage erreur
-    else {
-        couleur(KRouge);
-        cout << "-----------------------------------------------------------------" << endl;
-        cout << "Erreur, veuillez utiliser les touches de deplacements parametrees" << endl;
-        cout << "-----------------------------------------------------------------" << endl;
-        couleur(KReset);
-    }
 }
 
 
@@ -343,7 +331,7 @@ int menuConfig(){
     cout << "------------------------" << endl;
     cout << "| 1. Config 1         |" << endl;
     cout << "| 2. Config 2         |" << endl;
-    cout << "| 3. Config aleatoire |" << endl;
+    cout << "| 3. Config 3         |" << endl;
     cout << "| 4. Personnalise     |" << endl;
     cout << "| 5. Creation A a Z   |" << endl;
     cout << "------------------------" << endl;
@@ -364,7 +352,7 @@ int menuConfig(){
         // configuration aléatoire
         case 3:
             clearScreen();
-            srand(time(NULL));
+            srand(5);
             break;
         // configuration avec choix de la graine : demande entrée puis application
         case 4:
