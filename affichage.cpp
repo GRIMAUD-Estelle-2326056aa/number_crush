@@ -13,9 +13,8 @@ void couleur (const unsigned & coul) {
     cout << "\033[" << coul <<"m";
 }
 
-// affichage de la matrice sans les numéros de lignes / colonnes en haut / à gauche
+// affichage de la matrice sans les numéros de lignes et colonnes
 void  afficheMatriceV0 (const CMatrice & Mat) {
-    //TODO
     for (size_t i = 0; i < Mat.size(); ++i) {
         cout << "|";
         for (size_t j = 0; j < Mat[0].size(); ++j) {
@@ -26,10 +25,9 @@ void  afficheMatriceV0 (const CMatrice & Mat) {
 }
 
 
-// affichage de la matrice avec les numéros de lignes / colonnes en haut / à gauche
+// affichage de la matrice sans les numéros de lignes et colonnes
 // avec un fond de couleur
 void  afficheMatriceV1 (const CMatrice & Mat) {
-    //TODO
     for (size_t i = 0; i < Mat.size(); ++i) {
         cout << "|";
         for (size_t j = 0; j < Mat[0].size(); ++j) {
@@ -53,17 +51,17 @@ void  afficheMatriceV1 (const CMatrice & Mat) {
     }
 }
 
-// affichage de la matrice avec les numéros de lignes / colonnes en haut / à gauche
+// affichage de la matrice avec les numéros de lignes et colonnes
 // avec un fond de couleur
-// et mis en forme
+// et mise en forme
 void  afficheMatriceV2 (const CMatrice & mat) {
     unsigned leSetw (3);
+    // déclaration et initialisation d'un séparateur horizontal pour mettre en forme la matrice
     string uneLigneHorizontalePleine (2* (mat[0].size()-1)*(leSetw)+3, '-');
-
+    // affichage séparateur horizontal
     cout << uneLigneHorizontalePleine << endl;
-
-    //la premiere ligne avec les numéros bien places
-    //sur fond rouge pour cette ligne
+    // affichage numéros de colonnes séparés d'un pipe
+    //sur fond magenta
     cout << setw(leSetw + 3) << ' ' << '|';
     for (size_t i (0); i < mat[0].size(); ++i){
         couleur (KBGMagenta);
@@ -73,17 +71,16 @@ void  afficheMatriceV2 (const CMatrice & mat) {
         cout << "|";
     }
     cout << endl;
+    // affichage séparateur horizontal
     cout << uneLigneHorizontalePleine << endl;
-
-    //on doit afficher le numero des lignes
-    //=> pas de boucle for each
-    //for (const CVLigne & uneLigne : mat){
+    // pour chaque ligne : affichage du numéro de ligne
     for (size_t numLigne (0); numLigne < mat.size(); ++numLigne){
         couleur (KBGMagenta);
         cout << setw(leSetw +1) << numLigne;
         cout << " ";
         couleur (KReset);
         cout << " | ";
+        // pour chaque case de la ligne : affichage du contenu avec une couleur puis d'un pipe
         for (const int & cell : mat[numLigne]){
             switch (cell){
             case KAIgnorer :
@@ -119,6 +116,6 @@ void  afficheMatriceV2 (const CMatrice & mat) {
         couleur (KReset);
         cout << endl;
     }
-
+    // affichage séparateur horizontal
     cout << uneLigneHorizontalePleine << endl;
 }
