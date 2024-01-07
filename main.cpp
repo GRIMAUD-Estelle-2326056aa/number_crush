@@ -320,7 +320,7 @@ CMatrice creeConfig(){
     for (size_t numLigne (0); numLigne < mat.size(); ++numLigne)
         for (size_t numCol (0); numCol < mat[numLigne].size(); ++numCol){
             mat [numLigne][numCol] = 0;}
-    // remplissage de la matrice case par case avec les valeurs demandées en entrée
+    // remplissage de la matrice case par case avec les valeurs demandées en entrées
     for (size_t numLigne (0); numLigne < mat.size(); ++numLigne){
         for (size_t numCol (0); numCol < mat[numLigne].size(); ++numCol){
             unsigned remplir;
